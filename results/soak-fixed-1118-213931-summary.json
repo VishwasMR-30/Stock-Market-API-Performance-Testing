@@ -1,0 +1,208 @@
+{
+    "root_group": {
+        "checks": {
+            "login: status 200": {
+                "name": "login: status 200",
+                "path": "::login: status 200",
+                "id": "4d9cb0041884c26a6b714904c7aba027",
+                "passes": 50,
+                "fails": 0
+            },
+            "login: token returned": {
+                "id": "dee52e7df33ca0af3bd525c23dc2284a",
+                "passes": 50,
+                "fails": 0,
+                "name": "login: token returned",
+                "path": "::login: token returned"
+            },
+            "list stocks: 200": {
+                "path": "::list stocks: 200",
+                "id": "aab43b9b778f56fdeb9ba107bd24c868",
+                "passes": 9678,
+                "fails": 0,
+                "name": "list stocks: 200"
+            },
+            "stock detail: 200": {
+                "fails": 0,
+                "name": "stock detail: 200",
+                "path": "::stock detail: 200",
+                "id": "3836df76e3dc1fc4b29a1211cb9ff1c1",
+                "passes": 9678
+            },
+            "stock detail: has price": {
+                "name": "stock detail: has price",
+                "path": "::stock detail: has price",
+                "id": "e2d35015f838ccb920907126510360c9",
+                "passes": 9678,
+                "fails": 0
+            },
+            "watchlist add: 201 or 409": {
+                "passes": 9678,
+                "fails": 0,
+                "name": "watchlist add: 201 or 409",
+                "path": "::watchlist add: 201 or 409",
+                "id": "46acfad0c31123daeb346773a2d81398"
+            },
+            "watchlist get: 200": {
+                "path": "::watchlist get: 200",
+                "id": "4f40e829aff0b728764ad7ec09c10bba",
+                "passes": 9678,
+                "fails": 0,
+                "name": "watchlist get: 200"
+            },
+            "history: 200": {
+                "fails": 0,
+                "name": "history: 200",
+                "path": "::history: 200",
+                "id": "c0f25dbaa167f95a6e7bf5ca61e3b51e",
+                "passes": 985
+            }
+        },
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {}
+    },
+    "metrics": {
+        "vus_max": {
+            "min": 50,
+            "max": 50,
+            "value": 50
+        },
+        "http_req_waiting": {
+            "med": 1.7556,
+            "max": 192.3374,
+            "p(90)": 3.6497800000000002,
+            "p(95)": 4.913969999999999,
+            "avg": 2.3785764233778464,
+            "min": 0
+        },
+        "data_received": {
+            "count": 18754340,
+            "rate": 39006.858267645766
+        },
+        "http_req_tls_handshaking": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "data_sent": {
+            "count": 5360665,
+            "rate": 11149.563241112684
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 2.9337379122952667,
+            "min": 0,
+            "med": 2.277,
+            "max": 201.3454,
+            "p(90)": 4.30504,
+            "p(95)": 5.713309999999996
+        },
+        "http_req_connecting": {
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.0017467154753817897,
+            "min": 0,
+            "med": 0,
+            "max": 2.4916
+        },
+        "http_req_duration{name:GET /stocks/:symbol}": {
+            "min": 0,
+            "med": 1.5448,
+            "max": 111.7718,
+            "p(90)": 2.7131900000000004,
+            "p(95)": 3.6736749999999985,
+            "avg": 1.9692025935110653,
+            "thresholds": {
+                "p(95)<100": false
+            }
+        },
+        "iteration_duration": {
+            "min": 1009.8657,
+            "med": 2024.24475,
+            "max": 3292.6091,
+            "p(90)": 2821.90403,
+            "p(95)": 2917.975515,
+            "avg": 2023.3144107666867
+        },
+        "iterations": {
+            "count": 9678,
+            "rate": 20.129120742946736
+        },
+        "http_req_duration": {
+            "p(90)": 4.30504,
+            "p(95)": 5.713309999999996,
+            "avg": 2.9337379122952667,
+            "min": 0,
+            "med": 2.277,
+            "max": 201.3454,
+            "thresholds": {
+                "p(99)<1000": false,
+                "p(95)<500": false
+            }
+        },
+        "http_req_duration{name:GET /stocks/:symbol/history}": {
+            "med": 4.3568,
+            "max": 62.4737,
+            "p(90)": 6.543880000000001,
+            "p(95)": 7.953379999999992,
+            "avg": 4.981395126903567,
+            "min": 0.7814,
+            "thresholds": {
+                "p(95)<300": false
+            }
+        },
+        "http_req_receiving": {
+            "p(95)": 1.3776699999999997,
+            "avg": 0.5174009208242132,
+            "min": 0,
+            "med": 0.4429,
+            "max": 62.1576,
+            "p(90)": 1.0392
+        },
+        "http_reqs": {
+            "count": 39747,
+            "rate": 82.66916327442694
+        },
+        "http_req_sending": {
+            "max": 13.5497,
+            "p(90)": 0,
+            "p(95)": 0.512,
+            "avg": 0.0377605680931895,
+            "min": 0,
+            "med": 0
+        },
+        "http_req_blocked": {
+            "avg": 0.01130895413490326,
+            "min": 0,
+            "med": 0,
+            "max": 4.8776,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "checks": {
+            "passes": 49475,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.99": false
+            },
+            "value": 1
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 39747,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "vus": {
+            "value": 2,
+            "min": 1,
+            "max": 50
+        }
+    }
+}

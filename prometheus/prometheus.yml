@@ -1,0 +1,4 @@
+global:
+  scrape_interval: 15s
+# k6 PUSHES its metrics to Prometheus (remote write), so no scrape targets are needed.
+scrape_configs: []

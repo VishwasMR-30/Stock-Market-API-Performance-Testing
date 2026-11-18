@@ -1,0 +1,52 @@
+# One command starts the whole lab:   docker compose up -d --build
+#   sut         -> the Stock Market API being tested      http://localhost:8000/docs
+#   prometheus  -> stores the k6 metrics                  http://localhost:9090
+#   grafana     -> dashboards (no login needed)           http://localhost:3000
+#   k6          -> the load generator (started only when you run a test)
+services:
+  sut:
+    build: .
+    environment:
+      SEEDED_DEFECTS: ${SEEDED_DEFECTS:-on}   # on = with planted bugs, off = fixed version
+    ports: ["8000:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-remote-write-receiver     # lets k6 push metrics in
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports: ["9090:9090"]
+
+  grafana:
+    image: grafana/grafana:latest
+    depends_on: [prometheus]
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/k6-stock-dashboard.json
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports: ["3000:3000"]
+
+  k6:
+    image: grafana/k6:latest
+    profiles: ["k6"]            # not started by 'up'; only by 'run'
+    depends_on:
+      sut: { condition: service_healthy }
+    environment:
+      BASE_URL: http://sut:8000
+      K6_PROMETHEUS_RW_SERVER_URL: http://prometheus:9090/api/v1/write
+      K6_PROMETHEUS_RW_TREND_STATS: "p(95),p(99),avg,max"
+      K6_WEB_DASHBOARD: "true"
+    volumes:
+      - ./k6:/scripts:ro
+      - ./results:/results

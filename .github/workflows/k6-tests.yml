@@ -1,0 +1,32 @@
+name: k6-tests
+on: [push, pull_request]
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r app/requirements.txt
+      - uses: grafana/setup-k6-action@v1
+
+      - name: Start the API (fixed build)
+        run: |
+          SEEDED_DEFECTS=off nohup uvicorn app.main:app --port 8000 --log-level warning &
+          for i in $(seq 1 30); do curl -sf http://localhost:8000/health && break; sleep 1; done
+
+      - name: Functional / API tests (38 test cases)
+        run: k6 run --summary-export=results/functional-summary.json k6/functional.js
+
+      - name: Smoke test (30 s) + HTML report
+        env:
+          K6_WEB_DASHBOARD: "true"
+          K6_WEB_DASHBOARD_EXPORT: results/smoke-report.html
+        run: k6 run --summary-export=results/smoke-summary.json k6/smoke.js
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-results
+          path: results/
