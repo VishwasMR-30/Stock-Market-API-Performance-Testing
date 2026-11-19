@@ -1,151 +1,227 @@
-# Performance Evaluation and Load Testing of a Stock Market Monitoring Application Using Grafana k6
+﻿# Stock Market API Performance Testing
 
-ISE2501 · Software Testing & Quality Assurance · CA3 · Option 1: Specialized Tool Exploration & Program Unit/API Testing
+A performance testing project that evaluates a Stock Market REST API under different workloads using Grafana k6, Prometheus, and Grafana.
 
-A complete, runnable lab: a **Stock Market Monitoring REST API** (the System Under Test) plus **Grafana k6** test scripts, with live results in **Grafana** dashboards.
+**Course:** Software Testing & Quality Assurance  
+**Project:** Stock Market API Performance Testing  
+**University:** Presidency University  
+**Department:** Information Science & Engineering
 
-| Student | Role | Owns |
-|---|---|---|
-| Student A (Lead Tool Architect) | k6, Docker, Prometheus, Grafana, CI, reports | `k6/`, `docker-compose.yml`, `grafana/`, `prometheus/`, `.github/`, `run-test.*` |
-| Student B (Lead Test Designer) | SUT, formal test design | `app/`, `docs/TEST_MATRIX.md`, `docs/DEFECT_LOG.md` |
+## Team Members
+
+| Name | USN |
+|---|---|
+| Vishwas M R | 20241ISE0189 |
+| Sravan | 20241ISE0230 |
+
+## 1. Project Overview
+
+This project evaluates the performance, reliability, and behaviour of a Stock Market API under different traffic conditions.
+
+The backend is developed using FastAPI. Grafana k6 simulates multiple virtual users and sends requests to the API. Prometheus collects performance metrics, while Grafana visualizes the results through monitoring dashboards.
+
+The project focuses on response time, throughput, virtual users, and HTTP request failure rate.
+
+## 2. Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Backend development |
+| FastAPI | REST API framework |
+| Grafana k6 | Performance and load testing |
+| Prometheus | Metrics collection and storage |
+| Grafana | Dashboard and visualization |
+| Git and GitHub | Version control and collaboration |
+
+## 3. System Architecture
+
+```text
+       k6 Performance Tests
+                |
+                | HTTP Requests
+                v
+       FastAPI Stock Market API
+                |
+                | Performance Metrics
+                v
+           Prometheus
+                |
+                | Data Source
+                v
+             Grafana
+                |
+                v
+       Performance Dashboard
+```
+
+## 4. Testing Scenarios
+
+Five performance testing scenarios were executed.
+
+| Test | Purpose | Peak Virtual Users |
+|---|---|---:|
+| Smoke | Verify basic API performance | 1 |
+| Load | Evaluate expected workload | 100 |
+| Stress | Evaluate behaviour under heavy load | 596 |
+| Spike | Evaluate sudden traffic increase | 500 |
+| Soak | Evaluate sustained workload | 50 |
+
+## 5. Performance Test Results
+
+The following results were collected from the completed test runs.
+
+| Test | Requests | Average Response Time | p95 | p99 |
+|---|---:|---:|---:|---:|
+| Smoke | 210 | 2.02 ms | 2.88 ms | 4.25 ms |
+| Load | 61,332 | 2.22 ms | 4.45 ms | 7.23 ms |
+| Stress | 220,282 | 113.85 ms | 821.59 ms | 1,256.75 ms |
+| Spike | 64,263 | 336.54 ms | 946.99 ms | 1,137.16 ms |
+| Soak | 39,747 | 2.93 ms | 5.74 ms | 14.85 ms |
+
+### Key Observations
+
+- Total requests across all five test runs: **385,834**.
+- Observed HTTP request failure rate: **0%**.
+- Highest observed virtual users: **596**.
+- Stress and spike tests showed increased response latency under heavier workloads.
+- The tests demonstrate the importance of evaluating both reliability and response time.
+
+Note: The stress test completed, but its JSON summary export was interrupted. Its reported latency values were obtained from the Prometheus metrics.
+
+## 6. Monitoring and Visualization
+
+Prometheus is used to collect and store k6 performance metrics.
+
+Grafana is connected to Prometheus and provides visual monitoring of:
+
+- Virtual users
+- Request rates
+- Response time
+- Performance check pass rate
+- Test execution behaviour
+
+## 7. Project Structure
+
+```text
+stock-k6-project/
+|
+|-- app/
+|   |-- main.py
+|
+|-- k6/
+|   |-- smoke.js
+|   |-- load.js
+|   |-- stress.js
+|   |-- spike.js
+|   |-- soak.js
+|
+|-- prometheus/
+|-- grafana/
+|-- grafana-windows/
+|-- results/
+|   |-- screenshots/
+|
+|-- .github/
+|-- README.md
+```
+
+## 8. Running the Project on Windows
+
+### Prerequisites
+
+- Python 3.12
+- Grafana k6
+- Prometheus
+- Grafana
+
+### Step 1: Open the project directory
+
+```powershell
+cd "C:\Users\Vishwas M R\OneDrive\Desktop\StockMarketPerformanceTesting\stock-k6-project"
+```
+
+### Step 2: Start Prometheus
+
+```powershell
+.\grafana-windows\Start-Prometheus.ps1
+```
+
+Prometheus: http://127.0.0.1:9090
+
+### Step 3: Start the FastAPI backend
+
+Open another PowerShell terminal.
+
+```powershell
+cd "C:\Users\Vishwas M R\OneDrive\Desktop\StockMarketPerformanceTesting\stock-k6-project"
+
+$env:SEEDED_DEFECTS = "off"
+
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --log-level warning
+```
+
+API: http://127.0.0.1:8000  
+API documentation: http://127.0.0.1:8000/docs
+
+### Step 4: Open Grafana
+
+Start the Grafana Windows service if it is not already running.
+
+Grafana: http://localhost:3000
+
+The configured Prometheus data source is:
+
+```text
+http://127.0.0.1:9090
+```
+
+### Step 5: Run performance tests
+
+Use the k6 scripts in the `k6/` directory.
+
+Example:
+
+```powershell
+k6 run k6/smoke.js
+```
+
+Use the corresponding script for each testing scenario.
+
+## 9. Results and Evidence
+
+The `results/` directory contains generated test reports and supporting evidence.
+
+The `results/screenshots/` directory contains screenshots captured during testing.
+
+HTML reports can be opened in a web browser for further analysis.
+
+## 10. Limitations and Future Enhancements
+
+Current limitations:
+
+- The application uses simulated stock market data.
+- The project is a performance testing prototype, not a production trading platform.
+- The API uses in-memory demo data rather than a persistent production database.
+- Authentication is intended for demonstration and is not production hardened.
+
+Future enhancements:
+
+- Integrate a real-time stock market data provider.
+- Add persistent database storage.
+- Improve authentication and authorization.
+- Automate performance testing through CI/CD.
+- Deploy the application to a cloud environment.
+- Extend monitoring and performance analysis.
+
+## 11. References
+
+- [Grafana k6 Documentation](https://grafana.com/docs/k6/latest/)
+- [Prometheus Documentation](https://prometheus.io/docs/)
+- [Grafana Documentation](https://grafana.com/docs/grafana/latest/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
 
 ---
 
-## 1. The idea in plain English
-
-* **The app (SUT)** is a small stock-price API: login, list stocks, get a price, keep a watchlist, set price alerts, see price history. Prices are simulated, so no outside service is needed.
-* **k6** pretends to be many users at once ("virtual users", VUs) and measures how fast and how reliably the app answers.
-* **Grafana** draws that data as live graphs. k6 sends its numbers to **Prometheus** (a database), and Grafana reads them from there.
-* We run **two kinds of tests**:
-  1. **Functional / API tests** (`functional.js`): 38 test cases using boundary value analysis and equivalence partitioning. *Is the answer correct?*
-  2. **Performance tests** (smoke, load, stress, spike, soak): *Is it fast and stable under many users?*
-* The app ships with **3 deliberately planted ("seeded") defects** so your tests have something to find. Turn them off with `SEEDED_DEFECTS=off` to get the fixed version and prove the fix with a retest.
-
-```
- k6 (virtual users) --HTTP--> Stock API (FastAPI)
-        |
-        +--metrics--> Prometheus --> Grafana dashboard (live graphs)
-        +--> results/*.html and *.json  (reports for your slides)
-```
-
-## 2. Words you must know (for the viva)
-
-| Term | Meaning |
-|---|---|
-| VU (virtual user) | One simulated user running your script in a loop |
-| Check | An assertion in the script (e.g. "status is 200"). Failed checks = failed test cases |
-| Threshold | A pass/fail rule for the whole test, e.g. `p(95) < 500ms`. If crossed, k6 exits with an error |
-| p95 / p99 | 95% / 99% of requests were faster than this value. Better than average because it exposes slow outliers |
-| Throughput | Requests handled per second |
-| Smoke / Load / Stress / Spike / Soak | Does it work? / normal traffic / beyond capacity / sudden jump / long duration |
-| Think time | `sleep()` between actions, like a real person reading the screen |
-
-## 3. What to install (one time)
-
-1. **Docker Desktop** (https://www.docker.com/products/docker-desktop/): start it and wait until it says "running". This is the only essential install.
-2. **Git** (https://git-scm.com/) and a **GitHub account** to publish the repo.
-3. *(Optional, for the no-Docker path)* Python 3.12 and k6 (`winget install k6` on Windows).
-
-## 4. Quick start (Docker, recommended)
-
-Open a terminal (Windows: PowerShell) inside this folder.
-
-```powershell
-# 1. Start the lab: API + Prometheus + Grafana   (first time takes a few minutes)
-docker compose up -d --build
-
-# 2. Check the API:      http://localhost:8000/docs     (interactive API page)
-#    Open Grafana:       http://localhost:3000          (dashboard appears, no login)
-
-# 3. Run the functional test suite (38 test cases) - shows the 2 seeded functional bugs
-.\run-test.ps1 functional
-
-# 4. Run a smoke test, then the load test, and WATCH Grafana while it runs
-.\run-test.ps1 smoke
-.\run-test.ps1 load
-```
-
-macOS/Linux: use `./run-test.sh load` instead of `.\run-test.ps1 load`.
-If PowerShell blocks the script: `powershell -ExecutionPolicy Bypass -File .\run-test.ps1 load`.
-
-Pass extra k6 options after the test name, for example `.\run-test.ps1 load -e PEAK=200` (peak users) or `.\run-test.ps1 soak -e SOAK_DURATION=5m` (short soak).
-
-**Where the evidence goes:** every run saves `results/<test>-report.html` (open it in a browser: graphs + tables) and `results/<test>-summary.json`. The terminal output and the Grafana dashboard are your screenshots for Slides 6 and 8.
-
-### Switching between the buggy and the fixed build
-
-```powershell
-$env:SEEDED_DEFECTS="off"          # fixed version   (use "on" for the version with planted bugs)
-docker compose up -d --force-recreate sut
-curl http://localhost:8000/health   # shows "seeded_defects": false
-```
-
-## 5. Recommended workflow (do it in this order)
-
-| Step | What | Command | Evidence to keep |
-|---|---|---|---|
-| 1 | Start the lab | `docker compose up -d --build` | screenshot of `/docs` page |
-| 2 | **Functional, buggy build** | `.\run-test.ps1 functional` | terminal: 36/38 pass, TC-25 and TC-32 FAIL |
-| 3 | **Load, buggy build** | `.\run-test.ps1 load` | Grafana p95 graph + terminal showing the history threshold failing |
-| 4 | Fix (`SEEDED_DEFECTS=off`) and recreate `sut` | see above | note the root causes in `docs/DEFECT_LOG.md` |
-| 5 | **Functional, fixed build** | `.\run-test.ps1 functional` | terminal: 38/38 pass |
-| 6 | **Load, fixed build** | `.\run-test.ps1 load` | Grafana graph with the improvement |
-| 7 | Stress and spike | `.\run-test.ps1 stress` then `spike` | breaking point and recovery |
-| 8 | Soak (short) | `.\run-test.ps1 soak -e SOAK_DURATION=5m` | flat latency over time |
-| 9 | Push to GitHub, CI runs automatically | `git push` | green tick in the Actions tab |
-| 10 | Build slides | `docs/SLIDES_GUIDE.md` | |
-
-## 6. Without Docker (simpler, no Grafana)
-
-```powershell
-pip install -r app/requirements.txt
-uvicorn app.main:app --port 8000              # terminal 1: the API
-k6 run k6/functional.js                        # terminal 2
-$env:K6_WEB_DASHBOARD="true"; $env:K6_WEB_DASHBOARD_EXPORT="results/load-report.html"
-k6 run k6/load.js                              # HTML report with graphs in results/
-```
-Set `$env:SEEDED_DEFECTS="off"` before starting uvicorn for the fixed build. You can still use Grafana later; it only adds live dashboards.
-
-## 7. Project structure
-
-```
-app/main.py                  the Stock Market API (SUT) with seeded defects
-k6/lib/common.js             shared helpers, user journey, thresholds
-k6/functional.js             38 test cases (BVA, EP, negative, type checks)
-k6/smoke|load|stress|spike|soak.js    performance tests
-docker-compose.yml           API + Prometheus + Grafana + k6
-grafana/                     auto-loaded datasource and dashboard
-.github/workflows/           CI: functional + smoke on every push
-docs/TEST_MATRIX.md          formal test matrix (Slide 4)
-docs/DEFECT_LOG.md           defect report (Slide 7)
-docs/SLIDES_GUIDE.md         what to put on each of the 10 slides
-docs/VIVA_NOTES.md           likely viva questions with answers
-results/                     generated reports (commit your final ones)
-```
-
-## 8. API summary
-
-| Method | Path | Notes |
-|---|---|---|
-| POST | `/auth/login` | `{username, password}` (`user1`..`user500` / `password123`) returns a token |
-| GET | `/stocks?limit=1..20` | list prices |
-| GET | `/stocks/{SYMBOL}` | symbol = 2 to 10 capital letters |
-| GET | `/stocks/{SYMBOL}/history?days=1..365` | heavier endpoint (the performance defect lives here) |
-| POST / GET / DELETE | `/watchlist` | token required, max 10 symbols |
-| POST / GET | `/alerts` | token required, `target_price` 1.00 to 100000.00 |
-| POST | `/test/reset` | test helper: clears state |
-
-## 9. Troubleshooting
-
-* *Grafana graphs empty:* run a test first, and set the time range to "Last 15 minutes". Check http://localhost:9090 is up.
-* *`docker compose` not found:* start Docker Desktop and wait for it to finish starting.
-* *Port already in use (8000/3000/9090):* close the other program or change the left side of `ports:` in `docker-compose.yml`.
-* *k6 says thresholds crossed:* that is a normal "test failed" result, not a crash. It is exactly what you want to screenshot on the buggy build.
-* *Results differ from the reference numbers in docs:* normal; they depend on your machine. Use your own numbers on the slides.
-
-## 10. References
-
-* Grafana k6 documentation: https://grafana.com/docs/k6/latest/
-* k6 Prometheus remote write output: https://grafana.com/docs/k6/latest/results-output/real-time/prometheus-remote-write/
-* Grafana documentation: https://grafana.com/docs/grafana/latest/
-* FastAPI documentation: https://fastapi.tiangolo.com/
+**Project:** Stock Market API Performance Testing  
+**Developed by:** Vishwas M R and Sravan  
+**Presidency University**

@@ -31,3 +31,5 @@ Thumbs.db
 # Node dependencies and build output
 node_modules/
 dist/
+
+grafana-windows-addon.zip
